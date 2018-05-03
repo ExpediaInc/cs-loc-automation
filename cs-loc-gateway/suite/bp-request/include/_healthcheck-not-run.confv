@@ -1,0 +1,78 @@
+{
+  # optional if description template is provided
+  description: "basic healthcheck on the gateway",
+
+  #optional - category will be captured by kibana
+  tag: {
+    category: "healthcheck"
+  }
+
+  alex: "hello"
+
+  requests: [
+
+    {
+      # ----- Request fields2
+      # optional
+      # authorization: {
+      #  user:
+      #  password:
+      # },
+
+      #optional - by default it's a GET
+      # method: "GET"
+
+      #optional - key / value
+      # headers: {
+
+      #}
+
+      #optional - get merged at the beginning of the url
+      #host: ${loc-gateway},
+
+      #mandatory
+      max_retry: 5,
+      delay: 3000,
+      retry_delay: 5000,
+      url: ${loc-gateway}"/actuator/health",
+
+      #optional
+      # body: {}
+
+      #optional - for executing js or sql expression
+      # expression
+
+      #optional
+      #parameters: - key / value {
+      #}
+
+      # ---------- Response handling
+
+      # all optionals
+      # body, status, headers are returned from the response
+
+      assertions: [
+        "status === 200"
+      ],
+      checks: [
+        "body.status === 'UP'"
+        "body.details.diskSpace.status === 'UP'"
+      ],
+      output: {
+        vault_version: """
+          var bob = 'hello'
+          return bob + ' ---> ' + body.details.vault.details.version + '--->' + alex
+        """
+      }
+      #optional
+      #output: {
+      # my_variable: ""
+      #},
+      #output_to_session: {
+      #}
+
+    }
+
+  ]
+
+}
